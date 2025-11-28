@@ -1,0 +1,123 @@
+{
+  "locations": {
+    "library": {
+      "description": "Main library with study rooms, computer lab, and quiet zones",
+      "building": "Academic Block A",
+      "floor": "Ground floor",
+      "directions": "From the main entrance, go straight until you see the Academic Block A. The library is on the ground floor, clearly marked with a large sign.",
+      "coordinates": {"x": 100, "y": 200}
+    },
+    "cs lab": {
+      "description": "Computer Science laboratory with 50 workstations",
+      "building": "Computer Science Block",
+      "floor": "First floor",
+      "directions": "Enter the Computer Science Block, take the stairs to the first floor. The lab is at the end of the corridor.",
+      "coordinates": {"x": 150, "y": 250}
+    },
+    "admin block": {
+      "description": "Administrative offices for college management",
+      "building": "Admin Block",
+      "floor": "Ground floor",
+      "directions": "From Gate 2, walk straight for 100 meters. The Admin Block is on your left, with a large flag pole in front.",
+      "coordinates": {"x": 300, "y": 100}
+    },
+    "cafeteria": {
+      "description": "Main dining area serving breakfast, lunch, and snacks",
+      "building": "Student Center",
+      "floor": "Ground floor",
+      "directions": "Located in the Student Center, accessible from the main courtyard. Look for the food court sign.",
+      "coordinates": {"x": 200, "y": 300}
+    },
+    "gym": {
+      "description": "Fitness center with weights and cardio equipment",
+      "building": "Sports Complex",
+      "floor": "Ground floor",
+      "directions": "Behind the main sports field. Follow the path with blue signs to the Sports Complex.",
+      "coordinates": {"x": 400, "y": 150}
+    },
+    "bookstore": {
+      "description": "Sells textbooks, stationery, and college merchandise",
+      "building": "Academic Block B",
+      "floor": "Ground floor",
+      "directions": "Located in Academic Block B near the main entrance. Look for the green awning.",
+      "coordinates": {"x": 120, "y": 180}
+    },
+    "medical center": {
+      "description": "Provides basic medical care and first aid",
+      "building": "Health Services",
+      "floor": "Ground floor",
+      "directions": "Next to the main gate, marked with a red cross sign.",
+      "coordinates": {"x": 50, "y": 100}
+    },
+    "student services": {
+      "description": "Handles student registrations, forms, and academic queries",
+      "building": "Academic Block A",
+      "floor": "Second floor",
+      "directions": "Take the stairs in Academic Block A to the second floor. The office is right after the library.",
+      "coordinates": {"x": 100, "y": 220}
+    }
+  },
+  "timings": {
+    "library": {
+      "monday_to_friday": "8:00 AM - 9:00 PM",
+      "saturday": "9:00 AM - 6:00 PM",
+      "sunday": "10:00 AM - 4:00 PM"
+    },
+    "cafeteria": {
+      "monday_to_friday": "7:30 AM - 8:00 PM",
+      "saturday": "9:00 AM - 6:00 PM",
+      "sunday": "11:00 AM - 4:00 PM"
+    },
+    "admin block": {
+      "monday_to_friday": "9:00 AM - 5:00 PM",
+      "saturday": "10:00 AM - 2:00 PM",
+      "sunday": "Closed"
+    },
+    "gym": {
+      "monday_to_friday": "6:00 AM - 10:00 PM",
+      "saturday": "8:00 AM - 8:00 PM",
+      "sunday": "8:00 AM - 6:00 PM"
+    },
+    "bookstore": {
+      "monday_to_friday": "9:00 AM - 6:00 PM",
+      "saturday": "10:00 AM - 4:00 PM",
+      "sunday": "Closed"
+    },
+    "medical center": {
+      "monday_to_friday": "8:00 AM - 8:00 PM",
+      "saturday": "9:00 AM - 4:00 PM",
+      "sunday": "10:00 AM - 2:00 PM"
+    }
+  },
+  "directions": {
+    "gate2_to_admin": {
+      "description": "From Gate 2 to Admin Block",
+      "steps": [
+        "Enter through Gate 2",
+        "Walk straight for 100 meters",
+        "Admin Block will be on your left with a flag pole in front",
+        "Total walking time: approximately 2 minutes"
+      ]
+    },
+    "main_entrance_to_library": {
+      "description": "From main entrance to library",
+      "steps": [
+        "Enter through main entrance",
+        "Go straight until you see Academic Block A",
+        "Library is on the ground floor",
+        "Total walking time: approximately 3 minutes"
+      ]
+    },
+    "admin_to_cs_lab": {
+      "description": "From Admin Block to CS Lab",
+      "steps": [
+        "Start at Admin Block",
+        "Walk towards Academic Blocks",
+        "Turn right at the Computer Science Block",
+        "Take stairs to first floor",
+        "CS Lab is at the end of the corridor",
+        "Total walking time: approximately 4 minutes"
+      ]
+    }
+  }
+}
