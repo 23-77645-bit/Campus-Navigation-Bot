@@ -34,28 +34,28 @@
       "floor": "Ground floor",
       "directions": "Behind the main sports field. Follow the path with blue signs to the Sports Complex.",
       "coordinates": {"x": 400, "y": 150}
-    },
+    }, /*
     "bookstore": {
       "description": "Sells textbooks, stationery, and college merchandise",
       "building": "Academic Block B",
       "floor": "Ground floor",
       "directions": "Located in Academic Block B near the main entrance. Look for the green awning.",
       "coordinates": {"x": 120, "y": 180}
-    },
+    }, */
     "medical center": {
       "description": "Provides basic medical care and first aid",
       "building": "Health Services",
       "floor": "Ground floor",
       "directions": "Next to the main gate, marked with a red cross sign.",
       "coordinates": {"x": 50, "y": 100}
-    },
+    },/*
     "student services": {
       "description": "Handles student registrations, forms, and academic queries",
       "building": "Academic Block A",
       "floor": "Second floor",
       "directions": "Take the stairs in Academic Block A to the second floor. The office is right after the library.",
       "coordinates": {"x": 100, "y": 220}
-    }
+    }*/
   },
   "timings": {
     "library": {
