@@ -7,6 +7,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 import numpy as np
+from campus_data import get_all_locations, get_location_by_name
+
 
 def load_campus_data():
     """Load campus data from JSON file"""
@@ -20,33 +22,28 @@ def find_best_match(user_input, possible_matches, threshold=0.3):
 
 def get_location_info(location_name, data):
     """Get information about a specific location"""
-    locations = data.get('locations', {})
-    for location_key, location_info in locations.items():
-        if location_key.lower() == location_name.lower():
-            return location_info
+    # Use the campus_data module to get location info
+    location_info = get_location_by_name(location_name)
+    if location_info:
+        return {
+            "name": location_info["name"],
+            "location": f"Category: {location_info['category']}",
+            "description": f"This is a {location_info['category']} building",
+            "buildings": [location_info["name"]],
+            "floors": ["Ground floor"]  # Default, as the new data doesn't have floor info
+        }
     return None
+
 
 def get_timing_info(timing_query, data):
-    """Get timing information based on query"""
-    timings = data.get('timings', {})
-    for key, timing_info in timings.items():
-        if timing_query.lower() in key.lower():
-            return timing_info
+    """Get timing information based on query - not implemented in new data"""
+    # The new data doesn't have timing information
     return None
 
+
 def get_directions(start, end, data):
-    """Get directions between two points"""
-    directions = data.get('directions', {})
-    # Try direct path
-    path_key = f"{start.lower()} to {end.lower()}"
-    if path_key in directions:
-        return directions[path_key]
-    
-    # Try reverse path
-    reverse_path_key = f"{end.lower()} to {start.lower()}"
-    if reverse_path_key in directions:
-        return directions[reverse_path_key]
-    
+    """Get directions between two points - not implemented in new data"""
+    # The new data doesn't have directions
     return None
 
 class IntentClassifier:
