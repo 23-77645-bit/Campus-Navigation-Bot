@@ -1,123 +1,131 @@
 {
+  "campus_name": "BATSTATEU Arasof-Nasugbu Campus",
+  "last_updated": "2025-01-12",
   "locations": {
-    "library": {
-      "description": "Main library with study rooms, computer lab, and quiet zones",
-      "building": "Academic Block A",
-      "floor": "Ground floor",
-      "directions": "From the main entrance, go straight until you see the Academic Block A. The library is on the ground floor, clearly marked with a large sign.",
-      "coordinates": {"x": 100, "y": 200}
+    "1": {
+      "name": "Ibaan Building",
+      "category": "Mixed-Used",
+      "coordinates": [10, 5, 0]
     },
-    "cs lab": {
-      "description": "Computer Science laboratory with 50 workstations",
-      "building": "Computer Science Block",
-      "floor": "First floor",
-      "directions": "Enter the Computer Science Block, take the stairs to the first floor. The lab is at the end of the corridor.",
-      "coordinates": {"x": 150, "y": 250}
+    "2": {
+      "name": "VIP Corals - Nasugbu Marine Research Station",
+      "category": "Research Office",
+      "coordinates": [20, 3, 0]
     },
-    "admin block": {
-      "description": "Administrative offices for college management",
-      "building": "Admin Block",
-      "floor": "Ground floor",
-      "directions": "From Gate 2, walk straight for 100 meters. The Admin Block is on your left, with a large flag pole in front.",
-      "coordinates": {"x": 300, "y": 100}
+    "3": {
+      "name": "Taal Building",
+      "category": "Mixed-Used",
+      "coordinates": [15, 4, 0]
     },
-    "cafeteria": {
-      "description": "Main dining area serving breakfast, lunch, and snacks",
-      "building": "Student Center",
-      "floor": "Ground floor",
-      "directions": "Located in the Student Center, accessible from the main courtyard. Look for the food court sign.",
-      "coordinates": {"x": 200, "y": 300}
+    "4": {
+      "name": "Rosario Canteen",
+      "category": "Auxiliary Services",
+      "coordinates": [25, 30, 0]
     },
-    "gym": {
-      "description": "Fitness center with weights and cardio equipment",
-      "building": "Sports Complex",
-      "floor": "Ground floor",
-      "directions": "Behind the main sports field. Follow the path with blue signs to the Sports Complex.",
-      "coordinates": {"x": 400, "y": 150}
-    }, /*
-    "bookstore": {
-      "description": "Sells textbooks, stationery, and college merchandise",
-      "building": "Academic Block B",
-      "floor": "Ground floor",
-      "directions": "Located in Academic Block B near the main entrance. Look for the green awning.",
-      "coordinates": {"x": 120, "y": 180}
-    }, */
-    "medical center": {
-      "description": "Provides basic medical care and first aid",
-      "building": "Health Services",
-      "floor": "Ground floor",
-      "directions": "Next to the main gate, marked with a red cross sign.",
-      "coordinates": {"x": 50, "y": 100}
-    },/*
-    "student services": {
-      "description": "Handles student registrations, forms, and academic queries",
-      "building": "Academic Block A",
-      "floor": "Second floor",
-      "directions": "Take the stairs in Academic Block A to the second floor. The office is right after the library.",
-      "coordinates": {"x": 100, "y": 220}
-    }*/
-  },
-  "timings": {
-    "library": {
-      "monday_to_friday": "8:00 AM - 9:00 PM",
-      "saturday": "9:00 AM - 6:00 PM",
-      "sunday": "10:00 AM - 4:00 PM"
+    "5": {
+      "name": "Apacible Museum",
+      "category": "Administration Building",
+      "coordinates": [12, 15, 0]
     },
-    "cafeteria": {
-      "monday_to_friday": "7:30 AM - 8:00 PM",
-      "saturday": "9:00 AM - 6:00 PM",
-      "sunday": "11:00 AM - 4:00 PM"
+    "6": {
+      "name": "Sto. Tomas Building",
+      "category": "Academic Buildings",
+      "coordinates": [16, 35, 1]
     },
-    "admin block": {
-      "monday_to_friday": "9:00 AM - 5:00 PM",
-      "saturday": "10:00 AM - 2:00 PM",
-      "sunday": "Closed"
+    "7": {
+      "name": "Joson Gymnasium",
+      "category": "Academic Buildings",
+      "coordinates": [18, 37, 0]
     },
-    "gym": {
-      "monday_to_friday": "6:00 AM - 10:00 PM",
-      "saturday": "8:00 AM - 8:00 PM",
-      "sunday": "8:00 AM - 6:00 PM"
+    "8": {
+      "name": "Infirmary",
+      "category": "Allied Service",
+      "coordinates": [30, 25, 0]
     },
-    "bookstore": {
-      "monday_to_friday": "9:00 AM - 6:00 PM",
-      "saturday": "10:00 AM - 4:00 PM",
-      "sunday": "Closed"
+    "9": {
+      "name": "Ermita Building",
+      "category": "Administration Building",
+      "coordinates": [14, 17, 0]
     },
-    "medical center": {
-      "monday_to_friday": "8:00 AM - 8:00 PM",
-      "saturday": "9:00 AM - 4:00 PM",
-      "sunday": "10:00 AM - 2:00 PM"
-    }
-  },
-  "directions": {
-    "gate2_to_admin": {
-      "description": "From Gate 2 to Admin Block",
-      "steps": [
-        "Enter through Gate 2",
-        "Walk straight for 100 meters",
-        "Admin Block will be on your left with a flag pole in front",
-        "Total walking time: approximately 2 minutes"
-      ]
+    "10": {
+      "name": "Villadolid Ground Powerhouse",
+      "category": "Others",
+      "coordinates": [40, 12, 0]
     },
-    "main_entrance_to_library": {
-      "description": "From main entrance to library",
-      "steps": [
-        "Enter through main entrance",
-        "Go straight until you see Academic Block A",
-        "Library is on the ground floor",
-        "Total walking time: approximately 3 minutes"
-      ]
+    "11": {
+      "name": "Lobo Building",
+      "category": "Academic Buildings",
+      "coordinates": [20, 39, 0]
     },
-    "admin_to_cs_lab": {
-      "description": "From Admin Block to CS Lab",
-      "steps": [
-        "Start at Admin Block",
-        "Walk towards Academic Blocks",
-        "Turn right at the Computer Science Block",
-        "Take stairs to first floor",
-        "CS Lab is at the end of the corridor",
-        "Total walking time: approximately 4 minutes"
-      ]
+    "12": {
+      "name": "Talisay Mini Forest",
+      "category": "Others",
+      "coordinates": [42, 10, 0]
+    },
+    "13": {
+      "name": "Lipa Building",
+      "category": "Academic Buildings",
+      "coordinates": [22, 41, 0]
+    },
+    "14": {
+      "name": "Student Council Building",
+      "category": "General Services",
+      "coordinates": [32, 20, 0]
+    },
+    "15": {
+      "name": "Calatagan Building",
+      "category": "Academic Buildings",
+      "coordinates": [24, 43, 0]
+    },
+    "16": {
+      "name": "Lemery Building",
+      "category": "Academic Buildings",
+      "coordinates": [26, 45, 0]
+    },
+    "17": {
+      "name": "Maintenance Building",
+      "category": "General Services",
+      "coordinates": [34, 18, 0]
+    },
+    "18": {
+      "name": "Open Court",
+      "category": "Others",
+      "coordinates": [44, 8, 0]
+    },
+    "19": {
+      "name": "Lian Cafeteria",
+      "category": "Auxiliary Services",
+      "coordinates": [28, 28, 0]
+    },
+    "20": {
+      "name": "Nasugbu Hostel",
+      "category": "Mixed-Used",
+      "coordinates": [12, 9, 0]
+    },
+    "21": {
+      "name": "San Juan Building",
+      "category": "Academic Buildings",
+      "coordinates": [28, 47, 0]
+    },
+    "22": {
+      "name": "Batangan Student Services Center",
+      "category": "Mixed-Used",
+      "coordinates": [10, 7, 0]
+    },
+    "23": {
+      "name": "Roxas Ground Facade",
+      "category": "General Services",
+      "coordinates": [36, 16, 0]
+    },
+    "24": {
+      "name": "RGO Commercial Rental Stall",
+      "category": "Others",
+      "coordinates": [46, 6, 0]
+    },
+    "25": {
+      "name": "Entrance-Exit (Guardhouse)",
+      "category": "General Services",
+      "coordinates": [38, 14, 0]
     }
   }
 }

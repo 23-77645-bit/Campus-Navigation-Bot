@@ -7,30 +7,22 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Logs
+*.log
+
 # Environment
 .env
 .env.local
 *.env.*
 
-# Logs
-*.log
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# IDE
+# Editor/IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Build
+# Build/dist
 dist/
 build/
 *.egg-info/
