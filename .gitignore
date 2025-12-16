@@ -1,4 +1,4 @@
-```
+```gitignore
 # Python
 __pycache__/
 *.pyc
@@ -9,44 +9,45 @@ env/
 venv/
 .venv/
 .ENV
-.ENV.*
-.venv.bak/
-env.bak/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Logs
 *.log
 
-# Environment variables
+# Environment
 .env
 .env.local
+.env.*
 *.env
 
-# IDE specific
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
+*.tmp
 
 # Build artifacts
-build/
 dist/
-*.egg-info/
+build/
+*.out
+*.exe
+*.dll
+*.so
+*.a
+*.obj
+*.class
 
-# Temporary files
-*.tmp
-*.temp
-
-# MyPy cache
-.mypy_cache/
-# Pytest cache
-.pytest_cache/
+# Dependencies
+node_modules/
+target/
+.gradle/
 ```
