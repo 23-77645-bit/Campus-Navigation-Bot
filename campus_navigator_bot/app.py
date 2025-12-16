@@ -215,7 +215,9 @@ def generate_response(user_input):
                 return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium'."
 
         else:
-            return "I'm not sure I understand. You can ask me about locations, get 3D visualizations, or directions on campus. For example:\\n\\n• 'Where is the Ibaan Building?'\\n• 'Show 3D map'\\n• 'How do I get from Ibaan Building to Sto. Tomas Building?'"with st.sidebar:
+            return "I'm not sure I understand. You can ask me about locations, get 3D visualizations, or directions on campus. For example:\\n\\n• 'Where is the Ibaan Building?'\\n• 'Show 3D map'\\n• 'How do I get from Ibaan Building to Sto. Tomas Building?'"
+
+with st.sidebar:
     st.title("📍 Campus Navigator")
     st.markdown("---")
     st.header("About")
