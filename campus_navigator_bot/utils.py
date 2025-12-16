@@ -8,6 +8,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 import numpy as np
 from campus_data import get_all_locations, get_location_by_name
+from navigation import get_directions as get_navigation_directions
 
 
 def load_campus_data():
@@ -42,9 +43,8 @@ def get_timing_info(timing_query, data):
 
 
 def get_directions(start, end, data):
-    """Get directions between two points - not implemented in new data"""
-    # The new data doesn't have directions
-    return None
+    """Get directions between two points using the navigation module"""
+    return get_navigation_directions(start, end)
 
 class IntentClassifier:
     """Simple ML model to classify user intents using Naive Bayes"""
@@ -52,6 +52,7 @@ class IntentClassifier:
     def __init__(self):
         self.model = None
         self.is_trained = False
+        self.model_file = 'intent_classifier_model.pkl'  # Cache file for the model
         
     def train_model(self):
         """Train the intent classification model"""
@@ -149,10 +150,16 @@ class IntentClassifier:
         self.model.fit(texts, labels)
         self.is_trained = True
         
+        # Save the trained model for future use
+        self.save_model(self.model_file)
+        
     def predict_intent(self, text):
         """Predict the intent of the user's text"""
         if not self.is_trained:
-            self.train_model()
+            # Try to load a cached model first
+            if not self.load_model(self.model_file):
+                # If no cached model, train a new one
+                self.train_model()
         
         if self.model is None:
             return "unknown"
@@ -172,10 +179,18 @@ class IntentClassifier:
         if self.is_trained:
             with open(filepath, 'wb') as f:
                 pickle.dump(self.model, f)
+            return True
+        return False
     
     def load_model(self, filepath):
         """Load a pre-trained model from a file"""
         if os.path.exists(filepath):
-            with open(filepath, 'rb') as f:
-                self.model = pickle.load(f)
-                self.is_trained = True
+            try:
+                with open(filepath, 'rb') as f:
+                    self.model = pickle.load(f)
+                    self.is_trained = True
+                return True
+            except Exception as e:
+                print(f"Could not load model from {filepath}: {e}")
+                return False
+        return False

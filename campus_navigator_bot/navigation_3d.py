@@ -1,10 +1,12 @@
 import plotly.graph_objects as go
 from campus_data import get_coordinates_map, location_exists, get_location_by_name
+from navigation import get_directions_with_pathfinding
 
 
 def show_campus_3d_map(current_location: str, target_location: str):
     """
     Create and display a 3D visualization of the campus highlighting current and target locations
+    and showing the route between them
     Args:
         current_location: The user's current location
         target_location: The destination location
@@ -46,6 +48,38 @@ def show_campus_3d_map(current_location: str, target_location: str):
         textposition="top center",
         name='Campus Locations'
     ))
+    
+    # Get the route path between locations
+    route_path, total_distance = get_directions_with_pathfinding(current_location, target_location)
+    
+    if route_path:
+        # Extract coordinates for the route path
+        route_x = []
+        route_y = []
+        route_z = []
+        
+        for location in route_path:
+            coords = coordinates_map[location]
+            route_x.append(coords[0])
+            route_y.append(coords[1])
+            route_z.append(coords[2])
+        
+        # Add the route line
+        fig.add_trace(go.Scatter3d(
+            x=route_x,
+            y=route_y,
+            z=route_z,
+            mode='lines+markers',
+            line=dict(
+                color='orange',
+                width=5
+            ),
+            marker=dict(
+                size=6,
+                color='orange'
+            ),
+            name=f'Route ({total_distance:.2f} units)'
+        ))
     
     # Highlight current location
     current_coords = get_coordinates_map()[current_location]

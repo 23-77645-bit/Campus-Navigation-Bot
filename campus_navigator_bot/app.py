@@ -5,6 +5,7 @@ from difflib import get_close_matches
 from utils import load_campus_data, find_best_match, get_location_info, get_timing_info, get_directions, IntentClassifier
 from campus_data import get_all_locations, location_exists
 from navigation_3d import show_campus_3d_map
+from search import search_locations
 import time
 
 # Load campus data
@@ -121,6 +122,32 @@ def generate_response(user_input):
     if any(keyword in user_input_lower for keyword in ['3d map', 'visualize', 'navigate 3d', '3d visualization', '3d view', 'show 3d']):
         return "3D_MAP_REQUEST"
     
+    # Check for search requests
+    if any(keyword in user_input_lower for keyword in ['search', 'find locations', 'find places', 'show me all', 'list']):
+        search_query = user_input_lower.replace('search', '').replace('find locations', '').replace('find places', '').replace('show me all', '').replace('list', '').strip()
+        if search_query:
+            search_results = search_locations(search_query)
+            if search_results:
+                response = f"Found {len(search_results)} location(s) matching '{search_query}':\n\n"
+                for i, loc in enumerate(search_results[:5], 1):  # Show top 5 results
+                    response += f"{i}. **{loc['name']}** - Category: {loc['category']}\n"
+                if len(search_results) > 5:
+                    response += f"\n... and {len(search_results) - 5} more results."
+                return response
+            else:
+                return f"Sorry, I couldn't find any locations matching '{search_query}'. Try searching for building names or categories like 'Academic Buildings' or 'Administration Building'."
+        else:
+            # If no specific search term, show all locations
+            all_locations = get_all_locations()
+            if len(all_locations) <= 20:  # Only show if not too many
+                response = f"Here are all {len(all_locations)} locations on campus:\n\n"
+                for i, loc in enumerate(all_locations, 1):
+                    loc_info = get_location_info(loc, campus_data)
+                    response += f"{i}. **{loc}** - Category: {loc_info['category'] if loc_info else 'Unknown'}\n"
+                return response
+            else:
+                return f"There are {len(all_locations)} locations on campus. Try searching for specific locations or categories like 'Academic Buildings' or 'Administration Building'."
+    
     # Use ML classification to determine the type of query
     if intent == 'location':
         # Extract possible location names
@@ -143,7 +170,7 @@ def generate_response(user_input):
 
     elif intent == 'timing':
         # Timing information is not available in the new data
-        return "I can provide information about locations and directions. For 3D visualization, try asking 'Show 3D map' or 'Visualize campus'."
+        return "I can provide information about locations and directions. For 3D visualization, try asking 'Show 3D map' or 'Visualize campus'. For searching locations, try 'Search library' or 'Find academic buildings'."
 
     elif intent == 'direction':
         # Extract possible start and end locations
@@ -166,7 +193,7 @@ def generate_response(user_input):
             return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium.'"
 
     elif intent == 'greeting':
-        return "Hello! I'm your Campus Navigator Bot. I can help you find:\\n\\n• **Locations** - Ask 'Where is the Ibaan Building?' or 'Find the Sto. Tomas Building'\\n• **3D Visualization** - Ask 'Show 3D map' or 'Visualize campus'\\n• **Directions** - Ask 'How do I get from the Ibaan Building to the Sto. Tomas Building?'\\n\\nJust type your question and I'll help you navigate the campus!"
+        return "Hello! I'm your Campus Navigator Bot. I can help you find:\\n\\n• **Locations** - Ask 'Where is the Ibaan Building?' or 'Find the Sto. Tomas Building'\\n• **3D Visualization** - Ask 'Show 3D map' or 'Visualize campus'\\n• **Directions** - Ask 'How do I get from the Ibaan Building to the Sto. Tomas Building?'\\n• **Search** - Ask 'Search academic buildings' or 'Find all libraries'\\n\\nJust type your question and I'll help you navigate the campus!"
 
     elif intent == 'unknown':
         # Fallback for unknown queries - use keyword-based detection
@@ -191,7 +218,7 @@ def generate_response(user_input):
 
         # Check for timing queries
         elif any(keyword in user_input_lower for keyword in ['when', 'open', 'close', 'hours', 'timing', 'time']):
-            return "I can provide information about locations and directions. For 3D visualization, try asking 'Show 3D map' or 'Visualize campus'."
+            return "I can provide information about locations and directions. For 3D visualization, try asking 'Show 3D map' or 'Visualize campus'. For searching locations, try 'Search library' or 'Find academic buildings'."
 
         # Check for direction queries
         elif any(keyword in user_input_lower for keyword in ['how do i get', 'direction', 'navigate', 'go to', 'reach', 'path', 'route']):
@@ -215,7 +242,7 @@ def generate_response(user_input):
                 return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium'."
 
         else:
-            return "I'm not sure I understand. You can ask me about locations, get 3D visualizations, or directions on campus. For example:\\n\\n• 'Where is the Ibaan Building?'\\n• 'Show 3D map'\\n• 'How do I get from Ibaan Building to Sto. Tomas Building?'"
+            return "I'm not sure I understand. You can ask me about locations, get 3D visualizations, directions, or search for places on campus. For example:\\n\\n• 'Where is the Ibaan Building?'\\n• 'Show 3D map'\\n• 'How do I get from Ibaan Building to Sto. Tomas Building?'\\n• 'Search academic buildings'"
 
 with st.sidebar:
     st.title("📍 Campus Navigator")
