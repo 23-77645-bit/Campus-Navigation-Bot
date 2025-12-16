@@ -109,54 +109,6 @@ def sanitize_input(user_input):
     sanitized = re.sub(r'[<>"\'\\]', '', user_input)
     return sanitized.strip()
 
-
-def guess_destination(destination_keyword):
-    """Guess the intended destination from simple keywords like 'library' or 'cafeteria'"""
-    # Dictionary mapping common keywords to actual location names in the dataset
-    keyword_to_location = {
-        'library': ['Ibaan Building', 'Taal Building', 'Sto. Tomas Building'],  # Academic buildings that might house libraries
-        'cafeteria': ['Rosario Canteen', 'Lian Cafeteria'],
-        'canteen': ['Rosario Canteen', 'Lian Cafeteria'],
-        'dining': ['Rosario Canteen', 'Lian Cafeteria'],
-        'food': ['Rosario Canteen', 'Lian Cafeteria'],
-        'admin': ['Apacible Museum', 'Ermita Building'],
-        'administration': ['Apacible Museum', 'Ermita Building'],
-        'gym': ['Joson Gymnasium'],
-        'gymnasium': ['Joson Gymnasium'],
-        'infirmary': ['Infirmary'],
-        'clinic': ['Infirmary'],
-        'medical': ['Infirmary'],
-        'museum': ['Apacible Museum'],
-        'research': ['VIP Corals - Nasugbu Marine Research Station'],
-        'student': ['Student Council Building'],
-        'services': ['Student Council Building', 'Batangan Student Services Center'],
-        'hostel': ['Nasugbu Hostel'],
-        'accommodation': ['Nasugbu Hostel'],
-        'academic': ['Ibaan Building', 'Taal Building', 'Sto. Tomas Building', 'Joson Gymnasium', 'Lobo Building', 'Lipa Building', 'Calatagan Building', 'Lemery Building', 'San Juan Building'],
-        'classroom': ['Ibaan Building', 'Taal Building', 'Sto. Tomas Building', 'Joson Gymnasium', 'Lobo Building', 'Lipa Building', 'Calatagan Building', 'Lemery Building', 'San Juan Building'],
-        'building': ['Ibaan Building', 'Taal Building', 'Sto. Tomas Building', 'Joson Gymnasium', 'Lobo Building', 'Lipa Building', 'Calatagán Building', 'Lemery Building', 'San Juan Building'],
-        'gate': ['Entrance-Exit (Guardhouse)'],
-        'entrance': ['Entrance-Exit (Guardhouse)'],
-        'exit': ['Entrance-Exit (Guardhouse)'],
-        'guard': ['Entrance-Exit (Guardhouse)'],
-        'maintenance': ['Maintenance Building'],
-        'powerhouse': ['Villadolid Ground Powerhouse'],
-        'forest': ['Talisay Mini Forest'],
-        'court': ['Open Court']
-    }
-    
-    # Convert the keyword to lowercase for comparison
-    keyword_lower = destination_keyword.lower().strip()
-    
-    # Check if the keyword matches any known mappings
-    for keyword, possible_locations in keyword_to_location.items():
-        if keyword in keyword_lower:
-            # Return the first matching location from the list
-            return possible_locations[0]
-    
-    # If no match is found, return None
-    return None
-
 # Sidebar
 def generate_response(user_input):
     """Generate a response based on user input using ML classification"""
@@ -186,13 +138,6 @@ def generate_response(user_input):
             location_info = get_location_info(best_match, campus_data)
             if location_info:
                 return f"**{location_info['name']}** is located at {location_info['location']}.\\n\\nDescription: {location_info['description']}\\n\\nBuildings: {', '.join(location_info['buildings'])}\\n\\nFloors: {', '.join(location_info['floors'])}"
-        
-        # If still no match, try to guess the destination from simple keywords
-        guessed_destination = guess_destination(user_input)
-        if guessed_destination:
-            location_info = get_location_info(guessed_destination, campus_data)
-            if location_info:
-                return f"Did you mean **{location_info['name']}**? It is located at {location_info['location']}.\\n\\nDescription: {location_info['description']}\\n\\nBuildings: {', '.join(location_info['buildings'])}\\n\\nFloors: {', '.join(location_info['floors'])}"
 
         return "I'm sorry, I couldn't find information about that location. Try asking about specific places like 'Ibaan Building', 'Sto. Tomas Building', or 'Apacible Museum'."
 
@@ -218,61 +163,6 @@ def generate_response(user_input):
             else:
                 return f"Sorry, I don't have directions from {start.title()} to {end.title()}. Try asking for directions between major locations."
         else:
-            # If not enough locations found, try to guess destinations from simple keywords
-            # Split the user input to identify potential start and end locations
-            words = user_input_lower.split()
-            
-            # Try to find potential start and end locations using the guessing function
-            start_guessed = None
-            end_guessed = None
-            
-            # Look for phrases like "from X to Y" to identify start and end
-            import re
-            from_to_match = re.search(r'from\s+(.+?)\s+to\s+(.+)', user_input_lower)
-            if from_to_match:
-                start_part = from_to_match.group(1).strip()
-                end_part = from_to_match.group(2).strip()
-                
-                # Try exact match first
-                for loc in possible_locations:
-                    if start_part in loc.lower():
-                        start_guessed = loc
-                        break
-                    if end_part in loc.lower():
-                        end_guessed = loc
-                        break
-                
-                # If no exact match, try guessing
-                if not start_guessed:
-                    start_guessed = guess_destination(start_part)
-                if not end_guessed:
-                    end_guessed = guess_destination(end_part)
-            else:
-                # If no "from X to Y" pattern, try to guess from the whole input
-                # First try to guess the start location
-                start_guessed = guess_destination(user_input_lower)
-                # For end location, we'll try a different approach by splitting the input
-                if not start_guessed:
-                    # Try to extract potential locations from keywords in the input
-                    for keyword in ['library', 'cafeteria', 'canteen', 'dining', 'food', 'admin', 'gym', 'infirmary', 'museum', 'research', 'student', 'hostel', 'gate', 'entrance', 'exit']:
-                        if keyword in user_input_lower:
-                            potential_guessed = guess_destination(keyword)
-                            if potential_guessed and not start_guessed:
-                                start_guessed = potential_guessed
-                            elif potential_guessed and start_guessed and potential_guessed != start_guessed:
-                                end_guessed = potential_guessed
-                                break
-            
-            if start_guessed and end_guessed:
-                directions = get_directions(start_guessed, end_guessed, campus_data)
-                if directions:
-                    return f"**Directions from {start_guessed} to {end_guessed}:**\\n\\n" + "\\n".join([f"{i+1}. {step}" for i, step in enumerate(directions)])
-                else:
-                    return f"Sorry, I don't have directions from {start_guessed} to {end_guessed}. Try asking for directions between major locations."
-            elif start_guessed:
-                # Only start location was guessed, ask for destination
-                return f"I found your starting location as **{start_guessed}**. Please specify your destination. For example: 'How do I get from {start_guessed} to [destination]'"
-            
             return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium.'"
 
     elif intent == 'greeting':
@@ -296,13 +186,6 @@ def generate_response(user_input):
                 location_info = get_location_info(best_match, campus_data)
                 if location_info:
                     return f"**{location_info['name']}** is located at {location_info['location']}.\\n\\nDescription: {location_info['description']}\\n\\nBuildings: {', '.join(location_info['buildings'])}\\n\\nFloors: {', '.join(location_info['floors'])}"
-            
-            # If still no match, try to guess the destination from simple keywords
-            guessed_destination = guess_destination(user_input)
-            if guessed_destination:
-                location_info = get_location_info(guessed_destination, campus_data)
-                if location_info:
-                    return f"Did you mean **{location_info['name']}**? It is located at {location_info['location']}.\\n\\nDescription: {location_info['description']}\\n\\nBuildings: {', '.join(location_info['buildings'])}\\n\\nFloors: {', '.join(location_info['floors'])}"
 
             return "I'm sorry, I couldn't find information about that location. Try asking about specific places like 'Ibaan Building', 'Sto. Tomas Building', or 'Apacible Museum'."
 
@@ -329,62 +212,7 @@ def generate_response(user_input):
                 else:
                     return f"Sorry, I don't have directions from {start.title()} to {end.title()}. Try asking for directions between major locations."
             else:
-                # If not enough locations found, try to guess destinations from simple keywords
-                # Split the user input to identify potential start and end locations
-                words = user_input_lower.split()
-                
-                # Try to find potential start and end locations using the guessing function
-                start_guessed = None
-                end_guessed = None
-                
-                # Look for phrases like "from X to Y" to identify start and end
-                import re
-                from_to_match = re.search(r'from\s+(.+?)\s+to\s+(.+)', user_input_lower)
-                if from_to_match:
-                    start_part = from_to_match.group(1).strip()
-                    end_part = from_to_match.group(2).strip()
-                    
-                    # Try exact match first
-                    for loc in possible_locations:
-                        if start_part in loc.lower():
-                            start_guessed = loc
-                            break
-                        if end_part in loc.lower():
-                            end_guessed = loc
-                            break
-                    
-                    # If no exact match, try guessing
-                    if not start_guessed:
-                        start_guessed = guess_destination(start_part)
-                    if not end_guessed:
-                        end_guessed = guess_destination(end_part)
-                else:
-                    # If no "from X to Y" pattern, try to guess from the whole input
-                    # First try to guess the start location
-                    start_guessed = guess_destination(user_input_lower)
-                    # For end location, we'll try a different approach by splitting the input
-                    if not start_guessed:
-                        # Try to extract potential locations from keywords in the input
-                        for keyword in ['library', 'cafeteria', 'canteen', 'dining', 'food', 'admin', 'gym', 'infirmary', 'museum', 'research', 'student', 'hostel', 'gate', 'entrance', 'exit']:
-                            if keyword in user_input_lower:
-                                potential_guessed = guess_destination(keyword)
-                                if potential_guessed and not start_guessed:
-                                    start_guessed = potential_guessed
-                                elif potential_guessed and start_guessed and potential_guessed != start_guessed:
-                                    end_guessed = potential_guessed
-                                    break
-                
-                if start_guessed and end_guessed:
-                    directions = get_directions(start_guessed, end_guessed, campus_data)
-                    if directions:
-                        return f"**Directions from {start_guessed} to {end_guessed}:**\\n\\n" + "\\n".join([f"{i+1}. {step}" for i, step in enumerate(directions)])
-                    else:
-                        return f"Sorry, I don't have directions from {start_guessed} to {end_guessed}. Try asking for directions between major locations."
-                elif start_guessed:
-                    # Only start location was guessed, ask for destination
-                    return f"I found your starting location as **{start_guessed}**. Please specify your destination. For example: 'How do I get from {start_guessed} to [destination]'"
-                
-                return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium.'"
+                return "I can provide directions between locations. Try asking 'How do I get from Ibaan Building to Sto. Tomas Building?' or 'Directions from Apacible Museum to Joson Gymnasium'."
 
         else:
             return "I'm not sure I understand. You can ask me about locations, get 3D visualizations, or directions on campus. For example:\\n\\n• 'Where is the Ibaan Building?'\\n• 'Show 3D map'\\n• 'How do I get from Ibaan Building to Sto. Tomas Building?'"
@@ -459,28 +287,9 @@ with chat_container:
             st.markdown(f'<div class="bot-message">Bot: {message["content"]}</div>', unsafe_allow_html=True)
 
 # Input area
-col1, col2 = st.columns([4, 1])
 with st.form(key="input_form", clear_on_submit=True):
     user_input = st.text_input("Type your message here...", key="input")
-    with col1:
-        submit_button = st.form_submit_button("Send", type="primary")
-    with col2:
-        clear_button = st.form_submit_button("Clear Chat", type="secondary")
-
-# Process clear button
-if clear_button:
-    st.session_state.messages = []
-    # Add a new welcome message
-    welcome_message = (
-        "Hello! 👋 I'm your Campus Navigator. I can help you find locations, get 3D visualizations, "
-        "and get directions around campus. What can I help you with today?\n\n"
-        "Try asking things like:\n"
-        "- Where is the Ibaan Building?\n"
-        "- Show 3D map\n"
-        "- How do I get from Ibaan Building to Sto. Tomas Building?"
-    )
-    st.session_state.messages.append({"role": "assistant", "content": welcome_message})
-    st.rerun()
+    submit_button = st.form_submit_button("Send", type="primary")
 
 # Process user input
 if submit_button and user_input:
