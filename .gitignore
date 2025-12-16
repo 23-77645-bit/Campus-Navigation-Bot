@@ -10,43 +10,36 @@ venv/
 .venv/
 .ENV
 .ENV.*
-.venv.bak/
-env.bak/
+.python-version
 
-# Logs
-*.log
-
-# Environment variables
-.env
-.env.local
-*.env
-
-# IDE specific
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# Build artifacts
+# Build and distribution artifacts
 build/
 dist/
 *.egg-info/
 
-# Temporary files
-*.tmp
-*.temp
-
-# MyPy cache
-.mypy_cache/
-# Pytest cache
+# Testing
+.coverage
+coverage/
+htmlcov/
+.noserc
 .pytest_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
+# Environment specific
+.env
+.env.local
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 ```
