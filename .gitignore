@@ -8,38 +8,17 @@ __pycache__/
 env/
 venv/
 .venv/
-.ENV
-.ENV.*
-.python-version
-
-# Build and distribution artifacts
-build/
-dist/
-*.egg-info/
-
-# Testing
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
 .coverage
-coverage/
-htmlcov/
-.noserc
-.pytest_cache/
-.mypy_cache/
-
-# Logs
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
 *.log
-
-# Environment specific
-.env
-.env.local
-.env.*
-!.env.example
-
-# OS generated files
+.git/modules/
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 ```
