@@ -1,6 +1,6 @@
 """
 Data Access Object for User operations
-Handles all database interactions related to users
+Handles all database interactions related to users in water refilling station
 """
 from typing import List, Optional
 import sqlite3
@@ -8,7 +8,7 @@ from model.user import User
 
 
 class UserDAO:
-    def __init__(self, db_path: str = "library_system.db"):
+    def __init__(self, db_path: str = "water_refill_station.db"):
         self.db_path = db_path
 
     def create_table(self):

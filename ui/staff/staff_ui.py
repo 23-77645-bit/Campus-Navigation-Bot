@@ -1,14 +1,14 @@
 """
 Staff UI Main Interface
-Main window for staff users with navigation to different panels
+Main window for staff users with navigation to different panels for water refilling station
 """
 import tkinter as tk
 from tkinter import ttk
 from service.session_manager import SessionManager
 from ui.staff.customer_registration_panel import CustomerRegistrationPanel
-from ui.staff.borrowing_history_panel import BorrowingHistoryPanel
-from ui.staff.return_panel import ReturnPanel
-from ui.staff.purchase_panel import PurchasePanel
+from ui.staff.borrowing_history_panel import CustomerDepositHistoryPanel  # Changed to customer deposits
+from ui.staff.return_panel import ContainerReturnPanel  # Changed to container return
+from ui.staff.purchase_panel import RefillTransactionPanel  # Changed to refill transactions
 
 
 class StaffUI:
@@ -27,7 +27,7 @@ class StaffUI:
         
     def setup_ui(self):
         """Setup the staff user interface"""
-        self.parent.title(f"Staff Dashboard - Welcome {self.session_manager.get_current_user().username}")
+        self.parent.title(f"Water Refilling Station Staff - Welcome {self.session_manager.get_current_user().username}")
         self.parent.geometry("1000x700")
         self.parent.minsize(800, 600)
         
@@ -41,15 +41,15 @@ class StaffUI:
         
         # Create panels
         self.customer_panel = CustomerRegistrationPanel(self.notebook)
-        self.borrowing_panel = BorrowingHistoryPanel(self.notebook)
-        self.return_panel = ReturnPanel(self.notebook)
-        self.purchase_panel = PurchasePanel(self.notebook)
+        self.deposit_panel = CustomerDepositHistoryPanel(self.notebook)  # Changed to customer deposits
+        self.return_panel = ContainerReturnPanel(self.notebook)  # Changed to container return
+        self.transaction_panel = RefillTransactionPanel(self.notebook)  # Changed to refill transactions
         
         # Add panels to notebook
         self.notebook.add(self.customer_panel, text="Customers")
-        self.notebook.add(self.borrowing_panel, text="Borrowings")
-        self.notebook.add(self.return_panel, text="Returns")
-        self.notebook.add(self.purchase_panel, text="Purchases")
+        self.notebook.add(self.deposit_panel, text="Customer Deposits")  # Changed to customer deposits
+        self.notebook.add(self.return_panel, text="Container Returns")  # Changed to container return
+        self.notebook.add(self.transaction_panel, text="Refill Transactions")  # Changed to refill transactions
         
         # Add logout button
         logout_btn = ttk.Button(main_frame, text="Logout", command=self.logout)

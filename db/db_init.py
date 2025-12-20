@@ -1,14 +1,14 @@
 """
 Database initialization module
-Creates SQLite database file and initializes schema
+Creates SQLite database file and initializes schema for Water Refilling Station
 """
 import sqlite3
 import os
 
 
-def initialize_database(db_path="library_system.db"):
+def initialize_database(db_path="water_refill_station.db"):
     """
-    Initialize the database with required tables
+    Initialize the database with required tables for water refilling station
     """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -35,41 +35,57 @@ def initialize_database(db_path="library_system.db"):
             email TEXT UNIQUE NOT NULL,
             phone TEXT,
             address TEXT,
+            gallons_purchased INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     
-    # Create products table
+    # Create water containers table
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS products (
+        CREATE TABLE IF NOT EXISTS water_containers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT,
-            category TEXT,
-            price REAL,
+            container_type TEXT NOT NULL, -- '5gal_jug', 'small_bottle', etc.
+            price_per_unit REAL NOT NULL,
             quantity_available INTEGER DEFAULT 0,
-            qr_code TEXT UNIQUE,
+            size_liters REAL, -- Size in liters
+            description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     
-    # Create borrowings table
+    # Create refill transactions table
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS borrowings (
+        CREATE TABLE IF NOT EXISTS refill_transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_id INTEGER NOT NULL,
-            product_id INTEGER NOT NULL,
-            borrowed_by_user_id INTEGER NOT NULL,
-            borrowed_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            due_date TIMESTAMP,
-            returned_date TIMESTAMP,
-            status TEXT DEFAULT 'borrowed',  -- 'borrowed', 'returned', 'overdue'
+            container_id INTEGER NOT NULL,
+            staff_user_id INTEGER NOT NULL,
+            quantity_purchased INTEGER NOT NULL, -- Number of units purchased
+            unit_price REAL NOT NULL, -- Price per unit at time of transaction
+            total_amount REAL NOT NULL,
+            transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            payment_method TEXT DEFAULT 'cash', -- 'cash', 'card', 'credit'
+            transaction_status TEXT DEFAULT 'completed', -- 'completed', 'pending', 'cancelled'
             notes TEXT,
             FOREIGN KEY (customer_id) REFERENCES customers(id),
-            FOREIGN KEY (product_id) REFERENCES products(id),
-            FOREIGN KEY (borrowed_by_user_id) REFERENCES users(id)
+            FOREIGN KEY (container_id) REFERENCES water_containers(id),
+            FOREIGN KEY (staff_user_id) REFERENCES users(id)
+        )
+    ''')
+    
+    # Create customer deposits table for deposit tracking
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS customer_deposits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer_id INTEGER NOT NULL,
+            container_type TEXT NOT NULL, -- Type of container deposited
+            quantity INTEGER NOT NULL, -- Number of containers
+            deposit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'active', -- 'active', 'returned', 'lost'
+            notes TEXT,
+            FOREIGN KEY (customer_id) REFERENCES customers(id)
         )
     ''')
     

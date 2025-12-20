@@ -1,23 +1,14 @@
 """
 Data Access Object for Customer operations
-Handles all database interactions related to customers
+Handles all database interactions related to customers in water refilling station
 """
 from typing import List, Optional
 import sqlite3
-
-
-class Customer:
-    def __init__(self, id=None, first_name="", last_name="", email="", phone="", address=""):
-        self.id = id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.phone = phone
-        self.address = address
+from model.customer import Customer
 
 
 class CustomerDAO:
-    def __init__(self, db_path: str = "library_system.db"):
+    def __init__(self, db_path: str = "water_refill_station.db"):
         self.db_path = db_path
 
     def create_table(self):
@@ -33,6 +24,7 @@ class CustomerDAO:
                 email TEXT UNIQUE NOT NULL,
                 phone TEXT,
                 address TEXT,
+                gallons_purchased INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -48,10 +40,10 @@ class CustomerDAO:
             cursor = conn.cursor()
             
             cursor.execute('''
-                INSERT INTO customers (first_name, last_name, email, phone, address)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO customers (first_name, last_name, email, phone, address, gallons_purchased)
+                VALUES (?, ?, ?, ?, ?, ?)
             ''', (customer.first_name, customer.last_name, customer.email, 
-                  customer.phone, customer.address))
+                  customer.phone, customer.address, customer.gallons_purchased))
             
             conn.commit()
             conn.close()
@@ -64,15 +56,24 @@ class CustomerDAO:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, first_name, last_name, email, phone, address 
+        cursor.execute('''SELECT id, first_name, last_name, email, phone, address, gallons_purchased, created_at, updated_at
                          FROM customers WHERE id = ?''', (customer_id,))
         row = cursor.fetchone()
         
         conn.close()
         
         if row:
-            return Customer(id=row[0], first_name=row[1], last_name=row[2], 
-                           email=row[3], phone=row[4], address=row[5])
+            return Customer(
+                id=row[0], 
+                first_name=row[1], 
+                last_name=row[2], 
+                email=row[3], 
+                phone=row[4], 
+                address=row[5],
+                gallons_purchased=row[6],
+                created_at=row[7],
+                updated_at=row[8]
+            )
         return None
 
     def get_customer_by_email(self, email: str) -> Optional[Customer]:
@@ -80,15 +81,24 @@ class CustomerDAO:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, first_name, last_name, email, phone, address 
+        cursor.execute('''SELECT id, first_name, last_name, email, phone, address, gallons_purchased, created_at, updated_at
                          FROM customers WHERE email = ?''', (email,))
         row = cursor.fetchone()
         
         conn.close()
         
         if row:
-            return Customer(id=row[0], first_name=row[1], last_name=row[2], 
-                           email=row[3], phone=row[4], address=row[5])
+            return Customer(
+                id=row[0], 
+                first_name=row[1], 
+                last_name=row[2], 
+                email=row[3], 
+                phone=row[4], 
+                address=row[5],
+                gallons_purchased=row[6],
+                created_at=row[7],
+                updated_at=row[8]
+            )
         return None
 
     def get_all_customers(self) -> List[Customer]:
@@ -96,16 +106,25 @@ class CustomerDAO:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, first_name, last_name, email, phone, address 
-                         FROM customers''')
+        cursor.execute('''SELECT id, first_name, last_name, email, phone, address, gallons_purchased, created_at, updated_at
+                         FROM customers ORDER BY last_name, first_name''')
         rows = cursor.fetchall()
         
         conn.close()
         
         customers = []
         for row in rows:
-            customers.append(Customer(id=row[0], first_name=row[1], last_name=row[2], 
-                                     email=row[3], phone=row[4], address=row[5]))
+            customers.append(Customer(
+                id=row[0], 
+                first_name=row[1], 
+                last_name=row[2], 
+                email=row[3], 
+                phone=row[4], 
+                address=row[5],
+                gallons_purchased=row[6],
+                created_at=row[7],
+                updated_at=row[8]
+            ))
         
         return customers
 
@@ -117,10 +136,10 @@ class CustomerDAO:
         cursor.execute('''
             UPDATE customers
             SET first_name = ?, last_name = ?, email = ?, phone = ?, 
-                address = ?, updated_at = CURRENT_TIMESTAMP
+                address = ?, gallons_purchased = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
         ''', (customer.first_name, customer.last_name, customer.email, 
-              customer.phone, customer.address, customer.id))
+              customer.phone, customer.address, customer.gallons_purchased, customer.id))
         
         rows_affected = cursor.rowcount
         conn.commit()
@@ -142,21 +161,33 @@ class CustomerDAO:
         return rows_affected > 0
 
     def search_customers(self, search_term: str) -> List[Customer]:
-        """Search customers by name or email"""
+        """Search customers by first name, last name, or email"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, first_name, last_name, email, phone, address 
-                         FROM customers 
-                         WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ?''', 
-                      (f'%{search_term}%', f'%{search_term}%', f'%{search_term}%'))
+        search_pattern = f"%{search_term}%"
+        cursor.execute('''
+            SELECT id, first_name, last_name, email, phone, address, gallons_purchased, created_at, updated_at 
+            FROM customers 
+            WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ?
+            ORDER BY last_name, first_name
+        ''', (search_pattern, search_pattern, search_pattern))
         rows = cursor.fetchall()
         
         conn.close()
         
         customers = []
         for row in rows:
-            customers.append(Customer(id=row[0], first_name=row[1], last_name=row[2], 
-                                     email=row[3], phone=row[4], address=row[5]))
+            customers.append(Customer(
+                id=row[0], 
+                first_name=row[1], 
+                last_name=row[2], 
+                email=row[3], 
+                phone=row[4], 
+                address=row[5],
+                gallons_purchased=row[6],
+                created_at=row[7],
+                updated_at=row[8]
+            ))
         
         return customers

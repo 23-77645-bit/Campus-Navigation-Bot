@@ -1,6 +1,6 @@
 """
 Login Frame
-Main login interface for the application
+Main login interface for the Water Refilling Station Management System
 """
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -22,7 +22,7 @@ class LoginFrame(tk.Frame):
         
     def setup_ui(self):
         """Setup the user interface elements"""
-        self.parent.title("Login - Library Management System")
+        self.parent.title("Login - Water Refilling Station")
         self.parent.geometry("400x300")
         self.parent.resizable(False, False)
         
@@ -31,7 +31,7 @@ class LoginFrame(tk.Frame):
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Title
-        title_label = ttk.Label(main_frame, text="Library Management System", font=("Arial", 16, "bold"))
+        title_label = ttk.Label(main_frame, text="Water Refilling Station", font=("Arial", 16, "bold"))
         title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
         
         # Username field

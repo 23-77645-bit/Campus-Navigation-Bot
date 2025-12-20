@@ -1,6 +1,6 @@
 """
 Admin Activity Logger Service
-Logs administrative actions for audit purposes
+Logs administrative actions for audit purposes in water refilling station
 """
 import sqlite3
 from datetime import datetime
@@ -8,7 +8,7 @@ from model.user import User
 
 
 class AdminActivityLogger:
-    def __init__(self, db_path: str = "library_system.db"):
+    def __init__(self, db_path: str = "water_refill_station.db"):
         self.db_path = db_path
         self._ensure_audit_table_exists()
 
@@ -92,18 +92,50 @@ class AdminActivityLogger:
             record_id=deleted_user_id
         )
 
-    def log_product_addition(self, admin_user: User, product):
-        """Log when an admin adds a new product"""
+    def log_water_container_addition(self, admin_user: User, container):
+        """Log when an admin adds a new water container"""
         self.log_action(
             user=admin_user,
-            action="PRODUCT_ADDED",
-            table_affected="products",
-            record_id=getattr(product, 'id', None),
+            action="WATER_CONTAINER_ADDED",
+            table_affected="water_containers",
+            record_id=getattr(container, 'id', None),
             new_values={
-                'name': getattr(product, 'name', ''),
-                'category': getattr(product, 'category', ''),
-                'price': getattr(product, 'price', 0),
-                'quantity_available': getattr(product, 'quantity_available', 0)
+                'container_type': getattr(container, 'container_type', ''),
+                'price_per_unit': getattr(container, 'price_per_unit', 0),
+                'quantity_available': getattr(container, 'quantity_available', 0),
+                'size_liters': getattr(container, 'size_liters', 0)
+            }
+        )
+
+    def log_customer_registration(self, admin_user: User, customer):
+        """Log when a customer is registered"""
+        self.log_action(
+            user=admin_user,
+            action="CUSTOMER_REGISTERED",
+            table_affected="customers",
+            record_id=getattr(customer, 'id', None),
+            new_values={
+                'first_name': getattr(customer, 'first_name', ''),
+                'last_name': getattr(customer, 'last_name', ''),
+                'email': getattr(customer, 'email', ''),
+                'phone': getattr(customer, 'phone', ''),
+                'gallons_purchased': getattr(customer, 'gallons_purchased', 0)
+            }
+        )
+
+    def log_refill_transaction(self, staff_user: User, transaction):
+        """Log when a refill transaction is made"""
+        self.log_action(
+            user=staff_user,
+            action="REFILL_TRANSACTION_COMPLETED",
+            table_affected="refill_transactions",
+            record_id=getattr(transaction, 'id', None),
+            new_values={
+                'customer_id': getattr(transaction, 'customer_id', None),
+                'container_id': getattr(transaction, 'container_id', None),
+                'quantity_purchased': getattr(transaction, 'quantity_purchased', 0),
+                'total_amount': getattr(transaction, 'total_amount', 0),
+                'payment_method': getattr(transaction, 'payment_method', 'cash')
             }
         )
 
