@@ -1,59 +1,70 @@
 """
-Data Access Object for Product operations
-Handles all database interactions related to products
+Data Access Object for Refill Transaction operations
+Handles all database interactions related to refill transactions in water refilling station
 """
 from typing import List, Optional
 import sqlite3
+from datetime import datetime
 
 
-class Product:
-    def __init__(self, id=None, name="", description="", category="", price=0.0, quantity_available=0, qr_code=None):
+class RefillTransaction:
+    def __init__(self, id=None, customer_id=None, container_id=None, staff_user_id=None, quantity_purchased=0, unit_price=0.0, total_amount=0.0, transaction_date=None, payment_method="cash", transaction_status="completed", notes=""):
         self.id = id
-        self.name = name
-        self.description = description
-        self.category = category
-        self.price = price
-        self.quantity_available = quantity_available
-        self.qr_code = qr_code
+        self.customer_id = customer_id
+        self.container_id = container_id
+        self.staff_user_id = staff_user_id
+        self.quantity_purchased = quantity_purchased
+        self.unit_price = unit_price
+        self.total_amount = total_amount
+        self.transaction_date = transaction_date or datetime.now()
+        self.payment_method = payment_method  # 'cash', 'card', 'credit'
+        self.transaction_status = transaction_status  # 'completed', 'pending', 'cancelled'
+        self.notes = notes
 
 
-class ProductDAO:
-    def __init__(self, db_path: str = "library_system.db"):
+class RefillTransactionDAO:
+    def __init__(self, db_path: str = "water_refill_station.db"):
         self.db_path = db_path
 
     def create_table(self):
-        """Create the products table if it doesn't exist"""
+        """Create the refill_transactions table if it doesn't exist"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
         cursor.execute('''
-            CREATE TABLE IF NOT EXISTS products (
+            CREATE TABLE IF NOT EXISTS refill_transactions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                description TEXT,
-                category TEXT,
-                price REAL,
-                quantity_available INTEGER DEFAULT 0,
-                qr_code TEXT UNIQUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                customer_id INTEGER NOT NULL,
+                container_id INTEGER NOT NULL,
+                staff_user_id INTEGER NOT NULL,
+                quantity_purchased INTEGER NOT NULL,
+                unit_price REAL NOT NULL,
+                total_amount REAL NOT NULL,
+                transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                payment_method TEXT DEFAULT 'cash',
+                transaction_status TEXT DEFAULT 'completed',
+                notes TEXT,
+                FOREIGN KEY (customer_id) REFERENCES customers(id),
+                FOREIGN KEY (container_id) REFERENCES water_containers(id),
+                FOREIGN KEY (staff_user_id) REFERENCES users(id)
             )
         ''')
         
         conn.commit()
         conn.close()
 
-    def create_product(self, product: Product) -> bool:
-        """Insert a new product into the database"""
+    def create_transaction(self, transaction: RefillTransaction) -> bool:
+        """Insert a new refill transaction into the database"""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
             cursor.execute('''
-                INSERT INTO products (name, description, category, price, quantity_available, qr_code)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (product.name, product.description, product.category, 
-                  product.price, product.quantity_available, product.qr_code))
+                INSERT INTO refill_transactions (customer_id, container_id, staff_user_id, quantity_purchased, unit_price, total_amount, payment_method, transaction_status, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (transaction.customer_id, transaction.container_id, transaction.staff_user_id, 
+                  transaction.quantity_purchased, transaction.unit_price, transaction.total_amount,
+                  transaction.payment_method, transaction.transaction_status, transaction.notes))
             
             conn.commit()
             conn.close()
@@ -61,52 +72,111 @@ class ProductDAO:
         except sqlite3.Error:
             return False
 
-    def get_product_by_id(self, product_id: int) -> Optional[Product]:
-        """Retrieve a product by ID"""
+    def get_transaction_by_id(self, transaction_id: int) -> Optional[RefillTransaction]:
+        """Retrieve a refill transaction by ID"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, name, description, category, price, 
-                         quantity_available, qr_code FROM products WHERE id = ?''', (product_id,))
+        cursor.execute('''SELECT id, customer_id, container_id, staff_user_id, quantity_purchased, unit_price, total_amount, 
+                         transaction_date, payment_method, transaction_status, notes 
+                         FROM refill_transactions WHERE id = ?''', (transaction_id,))
         row = cursor.fetchone()
         
         conn.close()
         
         if row:
-            return Product(id=row[0], name=row[1], description=row[2], 
-                          category=row[3], price=row[4], quantity_available=row[5], qr_code=row[6])
+            return RefillTransaction(
+                id=row[0], 
+                customer_id=row[1], 
+                container_id=row[2], 
+                staff_user_id=row[3], 
+                quantity_purchased=row[4], 
+                unit_price=row[5], 
+                total_amount=row[6], 
+                transaction_date=row[7], 
+                payment_method=row[8], 
+                transaction_status=row[9], 
+                notes=row[10]
+            )
         return None
 
-    def get_all_products(self) -> List[Product]:
-        """Retrieve all products"""
+    def get_transactions_by_customer(self, customer_id: int) -> List[RefillTransaction]:
+        """Retrieve all refill transactions for a specific customer"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, name, description, category, price, 
-                         quantity_available, qr_code FROM products''')
+        cursor.execute('''SELECT id, customer_id, container_id, staff_user_id, quantity_purchased, unit_price, total_amount, 
+                         transaction_date, payment_method, transaction_status, notes 
+                         FROM refill_transactions 
+                         WHERE customer_id = ?
+                         ORDER BY transaction_date DESC''', (customer_id,))
         rows = cursor.fetchall()
         
         conn.close()
         
-        products = []
+        transactions = []
         for row in rows:
-            products.append(Product(id=row[0], name=row[1], description=row[2], 
-                                   category=row[3], price=row[4], quantity_available=row[5], qr_code=row[6]))
+            transactions.append(RefillTransaction(
+                id=row[0], 
+                customer_id=row[1], 
+                container_id=row[2], 
+                staff_user_id=row[3], 
+                quantity_purchased=row[4], 
+                unit_price=row[5], 
+                total_amount=row[6], 
+                transaction_date=row[7], 
+                payment_method=row[8], 
+                transaction_status=row[9], 
+                notes=row[10]
+            ))
         
-        return products
+        return transactions
 
-    def update_product(self, product: Product) -> bool:
-        """Update an existing product"""
+    def get_all_transactions(self) -> List[RefillTransaction]:
+        """Retrieve all refill transactions"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''SELECT id, customer_id, container_id, staff_user_id, quantity_purchased, unit_price, total_amount, 
+                         transaction_date, payment_method, transaction_status, notes 
+                         FROM refill_transactions 
+                         ORDER BY transaction_date DESC''')
+        rows = cursor.fetchall()
+        
+        conn.close()
+        
+        transactions = []
+        for row in rows:
+            transactions.append(RefillTransaction(
+                id=row[0], 
+                customer_id=row[1], 
+                container_id=row[2], 
+                staff_user_id=row[3], 
+                quantity_purchased=row[4], 
+                unit_price=row[5], 
+                total_amount=row[6], 
+                transaction_date=row[7], 
+                payment_method=row[8], 
+                transaction_status=row[9], 
+                notes=row[10]
+            ))
+        
+        return transactions
+
+    def update_transaction(self, transaction: RefillTransaction) -> bool:
+        """Update an existing refill transaction"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
         cursor.execute('''
-            UPDATE products
-            SET name = ?, description = ?, category = ?, price = ?, 
-                quantity_available = ?, qr_code = ?, updated_at = CURRENT_TIMESTAMP
+            UPDATE refill_transactions
+            SET customer_id = ?, container_id = ?, staff_user_id = ?, quantity_purchased = ?, 
+                unit_price = ?, total_amount = ?, payment_method = ?, transaction_status = ?, notes = ?
             WHERE id = ?
-        ''', (product.name, product.description, product.category, 
-              product.price, product.quantity_available, product.qr_code, product.id))
+        ''', (transaction.customer_id, transaction.container_id, transaction.staff_user_id, 
+              transaction.quantity_purchased, transaction.unit_price, transaction.total_amount,
+              transaction.payment_method, transaction.transaction_status, transaction.notes, 
+              transaction.id))
         
         rows_affected = cursor.rowcount
         conn.commit()
@@ -114,12 +184,12 @@ class ProductDAO:
         
         return rows_affected > 0
 
-    def delete_product(self, product_id: int) -> bool:
-        """Delete a product by ID"""
+    def delete_transaction(self, transaction_id: int) -> bool:
+        """Delete a refill transaction by ID"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('DELETE FROM products WHERE id = ?', (product_id,))
+        cursor.execute('DELETE FROM refill_transactions WHERE id = ?', (transaction_id,))
         
         rows_affected = cursor.rowcount
         conn.commit()
@@ -127,22 +197,48 @@ class ProductDAO:
         
         return rows_affected > 0
 
-    def search_products(self, search_term: str) -> List[Product]:
-        """Search products by name or description"""
+    def get_daily_transactions(self, date: str) -> List[RefillTransaction]:
+        """Get all transactions for a specific date (format: YYYY-MM-DD)"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        cursor.execute('''SELECT id, name, description, category, price, 
-                         quantity_available, qr_code FROM products 
-                         WHERE name LIKE ? OR description LIKE ?''', 
-                      (f'%{search_term}%', f'%{search_term}%'))
+        cursor.execute('''
+            SELECT id, customer_id, container_id, staff_user_id, quantity_purchased, unit_price, total_amount, 
+                   transaction_date, payment_method, transaction_status, notes 
+            FROM refill_transactions 
+            WHERE DATE(transaction_date) = ?
+            ORDER BY transaction_date DESC
+        ''', (date,))
         rows = cursor.fetchall()
         
         conn.close()
         
-        products = []
+        transactions = []
         for row in rows:
-            products.append(Product(id=row[0], name=row[1], description=row[2], 
-                                   category=row[3], price=row[4], quantity_available=row[5], qr_code=row[6]))
+            transactions.append(RefillTransaction(
+                id=row[0], 
+                customer_id=row[1], 
+                container_id=row[2], 
+                staff_user_id=row[3], 
+                quantity_purchased=row[4], 
+                unit_price=row[5], 
+                total_amount=row[6], 
+                transaction_date=row[7], 
+                payment_method=row[8], 
+                transaction_status=row[9], 
+                notes=row[10]
+            ))
         
-        return products
+        return transactions
+
+    def get_total_revenue(self) -> float:
+        """Get the total revenue from all completed transactions"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT SUM(total_amount) FROM refill_transactions WHERE transaction_status = "completed"')
+        result = cursor.fetchone()
+        
+        conn.close()
+        
+        return result[0] if result[0] else 0.0

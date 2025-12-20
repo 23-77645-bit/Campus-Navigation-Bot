@@ -1,6 +1,6 @@
 """
 QR Utility Service
-Generates and manages QR codes for products
+Generates and manages QR codes for water containers and customer management in water refilling station
 """
 import qrcode
 import uuid
@@ -74,18 +74,18 @@ class QRUtil:
         img.save(filename)
 
     @staticmethod
-    def generate_product_qr_code(product_id: int, product_name: str) -> str:
+    def generate_water_container_qr_code(container_id: int, container_type: str) -> str:
         """
-        Generate a QR code specifically for a product
+        Generate a QR code specifically for a water container
         
         Args:
-            product_id (int): ID of the product
-            product_name (str): Name of the product
+            container_id (int): ID of the water container
+            container_type (str): Type of the water container
             
         Returns:
             str: QR code string identifier
         """
-        qr_data = f"PRODUCT:{product_id}:{product_name}"
+        qr_data = f"WATER_CONTAINER:{container_id}:{container_type}"
         return qr_data
 
     @staticmethod
@@ -120,11 +120,11 @@ class QRUtil:
             entity_type = parts[0]
             entity_id = parts[1]
             
-            if entity_type == 'PRODUCT':
+            if entity_type == 'WATER_CONTAINER':
                 return {
-                    'type': 'product',
+                    'type': 'water_container',
                     'id': int(entity_id) if entity_id.isdigit() else None,
-                    'name': ':'.join(parts[2:]) if len(parts) > 2 else None
+                    'container_type': ':'.join(parts[2:]) if len(parts) > 2 else None
                 }
             elif entity_type == 'CUSTOMER':
                 return {

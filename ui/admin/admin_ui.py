@@ -1,14 +1,14 @@
 """
 Admin UI Main Interface
-Main window for admin users with navigation to different panels
+Main window for admin users with navigation to different panels for water refilling station
 """
 import tkinter as tk
 from tkinter import ttk
 from service.session_manager import SessionManager
 from ui.admin.user_management_panel import UserManagementPanel
-from ui.admin.product_crud_panel import ProductCRUDPanel
+from ui.admin.product_crud_panel import WaterContainerCRUDPanel  # Changed to water containers
 from ui.admin.customer_panel import CustomerPanel
-from ui.admin.borrowing_report_panel import BorrowingReportPanel
+from ui.admin.borrowing_report_panel import RefillTransactionReportPanel  # Changed to refill transactions
 from ui.admin.audit_log_panel import AuditLogPanel
 
 
@@ -28,7 +28,7 @@ class AdminUI:
         
     def setup_ui(self):
         """Setup the admin user interface"""
-        self.parent.title(f"Admin Dashboard - Welcome {self.session_manager.get_current_user().username}")
+        self.parent.title(f"Water Refilling Station Admin - Welcome {self.session_manager.get_current_user().username}")
         self.parent.geometry("1000x700")
         self.parent.minsize(800, 600)
         
@@ -42,16 +42,16 @@ class AdminUI:
         
         # Create panels
         self.user_panel = UserManagementPanel(self.notebook)
-        self.product_panel = ProductCRUDPanel(self.notebook)
+        self.container_panel = WaterContainerCRUDPanel(self.notebook)  # Changed to water containers
         self.customer_panel = CustomerPanel(self.notebook)
-        self.borrowing_panel = BorrowingReportPanel(self.notebook)
+        self.transaction_panel = RefillTransactionReportPanel(self.notebook)  # Changed to refill transactions
         self.audit_panel = AuditLogPanel(self.notebook)
         
         # Add panels to notebook
         self.notebook.add(self.user_panel, text="Users")
-        self.notebook.add(self.product_panel, text="Products")
+        self.notebook.add(self.container_panel, text="Water Containers")  # Changed to water containers
         self.notebook.add(self.customer_panel, text="Customers")
-        self.notebook.add(self.borrowing_panel, text="Borrowings")
+        self.notebook.add(self.transaction_panel, text="Refill Transactions")  # Changed to refill transactions
         self.notebook.add(self.audit_panel, text="Audit Logs")
         
         # Add logout button
